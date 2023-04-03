@@ -25,11 +25,11 @@ To get started with the Property Management Web App, you will need to install No
 
 We welcome contributions from anyone who is interested in improving this app. If you are a developer, designer, or anyone else who wants to contribute, please feel free to fork the repository, make your changes, and submit a pull request.
 
+
+Todos for this project can be found in trello board [here](https://trello.com/b/IDUJGTsA/property-management).
+
+
 You can also join our [Discord community](https://discord.gg/zQSrmqFaqg) to chat with other contributors and with me related to this project and get help with any questions you may have.
-
-## Support
-
-If you have any questions or issues with the Property Management Web App, you can reach out to us through our GitHub repository, Discord community, or email us at support@propertymanagementwebapp.com.
 
 ## License
 
