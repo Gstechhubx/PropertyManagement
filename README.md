@@ -5,19 +5,43 @@ This is a web application for managing properties, tenants, and leases, built wi
 ## Getting Started
 
 To get started with the Property Management Web App, you will need to install Node.js and Git on your computer. Once you have installed these tools, follow these steps:
-1. Clone the repository to your local machine: `git clone https://github.com/yuvarajsingh-0/PropertyManagement.git`
-2. cd into the project directory: `cd PropertyManagement`
+1. Clone the repository to your local machine: 
+```shell 
+git clone https://github.com/yuvarajsingh-0/PropertyManagement.git
+```
+2. cd into the project directory: 
+```shell
+cd PropertyManagement
+```
 - For running the Front End
-3. cd into the client directory: `cd client`
-4. Install the dependencies: `npm install`
-5. Start the development server: `npm run dev`
+3. cd into the client directory: 
+```shell
+cd client
+```
+4. Install the dependencies: 
+```shell 
+npm install
+```
+5. Start the development server: 
+```shell 
+npm run dev
+```
 6. Open your browser and navigate to `http://localhost:5173`
 
 - For running the API server 
-1. cd into the project directory: `cd PropertyManagement`
-2. cd into the server directory: `cd server`
-3. Install the dependencies: `npm install`
-4. Start the development server: `npm start`
+
+3. cd into the server directory:
+ ```shell
+cd server
+```
+4. Install the dependencies: 
+```shell 
+npm install
+```
+5. Start the development server: 
+```shell 
+npm start
+```
 
 
 
