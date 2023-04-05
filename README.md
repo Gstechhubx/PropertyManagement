@@ -1,7 +1,7 @@
 # Property Management Web App
 
 This is a web application for managing properties, tenants, and leases, built with Vite, React, and TailwindCSS. The app is designed to be user-friendly and customizable, and it includes features for managing properties, tenants, leases, rent collection, maintenance requests, and reporting.
-
+#### Status: Development
 ## Getting Started
 
 To get started with the Property Management Web App, you will need to install Node.js and Git on your computer. Once you have installed these tools, follow these steps:
