@@ -4,24 +4,21 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 const mongoose = require('mongoose');
 const session = require('express-session');
-const mongoStore = require('connect-mongodb-session')(session);
+const mongoStore = require('connect-mongo');
 require("dotenv").config({ path: '../.env' });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-const dbURI = process.env.MONGODB_URI;
-const store = new mongoStore({
-    uri: dbURI,
-    collection: "currentSessions",
-});
+const dbURI = process.env.MONGODB_LOCAL_URI;
+
 app.use(
     session({
-        store: store,
         secret: process.env.mongoStoreSECRET,
+        store: mongoStore.create({ mongoUrl: dbURI }),
         resave: false,
         saveUninitialized: false,
-        cookie: { maxAge: 3600000 } // 1 hour
+        ttl: 60 * 60 * 2
     })
 );
 app.use(cors({
@@ -29,8 +26,7 @@ app.use(cors({
     credentials: true
 
 }));
-
-app.use('/auth', require('./routes/users'));
+app.use('/auth', require('./routes/auth'));
 app.use('/property', require('./routes/property'));
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then((result) => console.log('Connected to db'))

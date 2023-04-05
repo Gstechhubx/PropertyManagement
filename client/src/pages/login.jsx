@@ -34,6 +34,7 @@ function Login() {
   });
   const [cred, setCred] = useState({ email: "", password: "" })
   const [loggedIn, setLogin] = useState(false)
+  const [userDetails, setUserDetails] = useState({})
   useEffect(() => {
     axios.get("http://localhost:9000/auth/login").then((res) => { console.log(res); setLogin(true); navigate("/ownerdashboard") }).catch(() => { console.log("Not logged in"); navigate("/") })
   }, []);
@@ -54,22 +55,19 @@ function Login() {
     })
       .then(res => {
         console.log(res, res.status)
-        if (res.status == 200) {
-          setLogin(true)
-          if (res.data.role == "owner") {
-
-            navigate('/ownerdashboard')
-          }
-          else {
-            navigate('/tenantdashboard')
-          }
+        setLogin(true)
+        if (res.data.role == "owner") {
+          setUserDetails(res.data)
+          navigate('/ownerdashboard')
         }
         else {
-          console.log(res.data)
-          alert("Invalid Credentials")
+          navigate('/tenantdashboard')
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        alert("Invalid Credentials")
+        console.log(err)
+      });
   }
   return (
     <div className=' h-[100vh] pt-[15%]'>

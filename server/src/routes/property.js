@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const properties = require('../models/property');
+const properties = require('../models/properties');
 const checkAuth = require('../middlewares/checkAuth');
 router.post('/addhouse', (req, res) => {
     properties.findOne({ userID: req.session.userID }).then((result) => {
