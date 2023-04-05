@@ -56,7 +56,13 @@ function Login() {
         console.log(res, res.status)
         if (res.status == 200) {
           setLogin(true)
-          navigate('/ownerdashboard')
+          if (res.data.role == "owner") {
+
+            navigate('/ownerdashboard')
+          }
+          else {
+            navigate('/tenantdashboard')
+          }
         }
         else {
           console.log(res.data)

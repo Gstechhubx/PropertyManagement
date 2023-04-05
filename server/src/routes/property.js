@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const properties = require('../models/property');
+const checkAuth = require('../middlewares/checkAuth');
 router.post('/addhouse', (req, res) => {
     properties.findOne({ userID: req.session.userID }).then((result) => {
         console.log(result);
@@ -42,7 +43,7 @@ router.post('/addhouse', (req, res) => {
     res.send("Hello")
 });
 
-router.get('/houses', (req, res) => {
+router.get('/houses', checkAuth, (req, res) => {
     properties.findOne({ userID: req.session.userID })
         .then((result) => {
             console.log(result, "in houses")

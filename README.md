@@ -4,7 +4,7 @@ This is a web application for managing properties, tenants, and leases, built wi
 
 ## Getting Started
 
-To get started with the Property Management Web App, you will need to install Node.js and Git on your computer. Once you have installed these tools, follow these steps:
+To get started with the Property Management Web App, you will need to install `Node.js`, `Vite`, `TailwindCSS` and `Git` on your computer. Once you have installed these tools, follow these steps:
 1. Clone the repository to your local machine: 
 ```shell 
 git clone https://github.com/yuvarajsingh-0/PropertyManagement.git

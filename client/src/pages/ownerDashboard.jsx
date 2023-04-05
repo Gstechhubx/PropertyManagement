@@ -5,9 +5,16 @@ import Navbar from '../components/navbar';
 
 export default function OwnerDashboard() {
   axios.defaults.withCredentials = true;
-  const [showForm, setShowForm] = useState(false);
   const Navigate = useNavigate();
+  const [showForm, setShowForm] = useState(false);
   const [details, setDetails] = useState({ house_name: "", rent: "", capacity: "", tenant_type: "" })
+  const [houses, setHouses] = useState([])
+  const [loggedIn, setLogin] = useState(false)
+  useEffect(() => {
+    if (!loggedIn) {
+      axios.get("http://localhost:9000/auth/login").then((res) => { setLogin(true); console.log(res, "loggedin") }).catch(() => { console.log("Not logged in line 96"); Navigate("/") })
+    }
+  }, [loggedIn]);
 
   useEffect(() => {
 
@@ -25,7 +32,6 @@ export default function OwnerDashboard() {
     )
   }, [])
 
-  const [houses, setHouses] = useState([])
   useEffect(() => {
     axios.get("http://localhost:9000/property/houses").then((res) => { if (res.data == null) { setHouses([]) } else { setHouses(res.data.houses); console.log(res.data, "houses  line 90") } }).catch((err) => { console.log("Not logged in line 36", err); Navigate("/") })
     console.log("rooooooms", houses)
@@ -85,12 +91,6 @@ export default function OwnerDashboard() {
     setShowForm(!showForm)
   }
 
-  const [loggedIn, setLogin] = useState(false)
-  useEffect(() => {
-    if (!loggedIn) {
-      axios.get("http://localhost:9000/auth/login").then((res) => { setLogin(true); console.log(res, "loggedin") }).catch(() => { console.log("Not logged in line 96"); Navigate("/") })
-    }
-  }, [loggedIn]);
 
 
   return (

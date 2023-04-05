@@ -11,11 +11,12 @@ router.post('/login', async (req, res) => {
         if (person.password === req.body.password) {
             req.session.isAuth = true
             req.session.userID = person.get('_id')
-            res.send()
+            res.send({ name: person.name, role: person.role, email: person.email })
             // res.sendStatus(200)
         }
         // res.sendStatus(401)
     } else {
+        res.sendStatus(401)
         console.log("person doesnt exist")
     }
 });
