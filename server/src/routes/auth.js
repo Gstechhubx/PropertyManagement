@@ -4,6 +4,7 @@ const users = require('../models/users');
 const owners = require('../models/owners');
 const tenants = require('../models/tenants');
 const bcrypt = require('bcrypt');
+const checkAuth = require('../middlewares/checkAuth');
 
 router.post('/login', async (req, res) => {
     console.log(req.body)
@@ -12,16 +13,18 @@ router.post('/login', async (req, res) => {
         if (person) {
             if (person.password === req.body.password) {
                 req.session.isAuth = true
-                req.session.userID = person.get('_id')
+                req.session.userid = person.get('_id')
                 if (person.role === "owner") {
                     owners.findOne({ email: person.email }).then((result) => {
                         console.log(result.name)
-                        res.send({ name: result.get('name'), role: person.role, email: person.email, properties: result.get('properties') })
+                        res.status(200).send({ name: result.get('name'), role: person.role, email: person.email, properties: result.get('properties') })
+                        // res.send({ name: result.get('name'), role: person.role, email: person.email, properties: result.get('properties') })
                     })
                 }
                 else {
                     tenants.findOne({ email: person.email }).then((result) => {
-                        res.send({ name: person.name, role: person.role, email: person.email, leaseStartDate: result.get('leaseStartDate'), leaseEndDate: result.get('leaseEndDate') })
+                        // res.sendStatus(200)
+                        res.status(200).send({ name: person.name, role: person.role, email: person.email, leaseStartDate: result.get('leaseStartDate'), leaseEndDate: result.get('leaseEndDate') })
                     })
                 }
             }
@@ -35,26 +38,50 @@ router.post('/login', async (req, res) => {
 router.post('/register', (req, res) => {
     // hashedPassword = bcrypt.hashSync(req.body.password, 10)
     // console.log(hashedPassword)
-    const person = new users({
-        name: req.body.name,
+    const user = new users({
         role: req.body.role,
         email: req.body.email,
         password: req.body.password
     })
 
-    person.save().then((result) => {
-        const owner = new owners({
-            name: req.body.name,
-            email: req.body.email,
-            properties: []
-        })
-        owner.save().then((result) => {
-            console.log(result)
-        }).catch((err) => {
-            console.log(err)
-        })
+    user.save().then((result) => {
+        console.log("in user save", result)
+        if (req.body.role === "owner") {
+
+            const owner = new owners({
+                userid: result._id,
+                name: req.body.name,
+                email: req.body.email,
+                phone: req.body.phone,
+                properties: []
+            })
+            owner.save().then((result) => {
+                console.log("saveed", result)
+            }).catch((err) => {
+                console.log(err)
+            }
+            )
+
+        }
+        else {
+            const tenant = new tenants({
+                name: req.body.name,
+                email: req.body.email,
+                leaseStartDate: req.body.leaseStartDate,
+                leaseEndDate: req.body.leaseEndDate
+            })
+            tenant.save().then((result) => {
+                console.log("saveedd", result)
+            }).catch((err) => {
+                console.log(err)
+            }
+            )
+        }
         res.sendStatus(200)
     }).catch((err) => {
+        if (err.code === 11000) {
+            res.status(409).send("Email already exists")
+        }
         res.sendStatus(500)
         console.error(err)
     })

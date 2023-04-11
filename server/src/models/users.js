@@ -7,6 +7,6 @@ const userSchema = new mongoose.Schema({
     role: { type: String, default: 'tenant', enum: ['tenant', 'owner'] },
 });
 
-const users = mongoose.model('logincreds', userSchema);
+const users = mongoose.model('users', userSchema);
 
 module.exports = users;

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../components/navbar';
 
-export default function House() {
+export default function Property() {
     const Navigate = useNavigate();
     axios.defaults.withCredentials = true;
     const [loggedIn, setLogin] = useState(false)
