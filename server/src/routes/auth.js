@@ -18,12 +18,15 @@ router.post('/login', async (req, res) => {
                     owners.findOne({ email: person.email }).then((result) => {
                         console.log(result.name)
                         res.status(200).send({ name: result.get('name'), role: person.role, email: person.email, properties: result.get('properties') })
+                        req.session.isOwner = true
+
                         // res.send({ name: result.get('name'), role: person.role, email: person.email, properties: result.get('properties') })
                     })
                 }
                 else {
                     tenants.findOne({ email: person.email }).then((result) => {
                         // res.sendStatus(200)
+                        req.session.isOwner = false
                         res.status(200).send({ name: person.name, role: person.role, email: person.email, leaseStartDate: result.get('leaseStartDate'), leaseEndDate: result.get('leaseEndDate') })
                     })
                 }

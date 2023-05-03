@@ -233,10 +233,9 @@ export default function OwnerDashboard() {
     <div className='bg-gray-100 h-[100vh] max-h-max'>
       {showForm ? form : null}
       <Navbar />
-      {properties.length == 0 ? <h1 className='text-4xl mt-3 text-center'>No Properties to show</h1> : null}
-      {properties.map((property) => {
+      {properties.length == 0 ? <h1 className='text-4xl mt-3 text-center'>No Properties to show</h1> : properties.map((property) => {
         return (
-          <Link key={property._id} to={{ pathname: `/dashboard/property/${property._id}` }}>
+          <Link key={property._id} to={{ pathname: `/dashboard/property/${property._id}` }} state={{ property_name: property.property_name }}>
             <div key={property._id} className='flex flex-col space-y-5 p-5 cursor-pointer m-5 shadow-md transition-all duration-400 ease-in-out hover:shadow-xl bg-white border-gray-400 rounded-lg backdrop-blur-20px backdrop-saturate-200'>
               <h1 className='text-2xl'>Property Name: {property.property_name}</h1>
               <h1 className='text-2xl'>Address: {property.address}</h1>

@@ -7,7 +7,6 @@ const unitSchema = new mongoose.Schema({
     status: { type: String, enum: ['vacant', 'occupied'], default: 'vacant' },
     monthlyRent: { type: Number, required: true },
     bedrooms: { type: Number },
-    bathrooms: { type: Number },
     tenant_type: { type: String, default: 'family', enum: ['family', 'bachelor', 'other'] },
     ispaid: { type: Boolean, default: false },
 });

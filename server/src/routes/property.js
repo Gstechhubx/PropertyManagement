@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const properties = require('../models/properties');
 const owners = require('../models/owners');
-const users = require('../models/users');
+const units = require('../models/units');
 const checkAuth = require('../middlewares/checkAuth');
 router.post('/addproperty', checkAuth, (req, res) => {
     owners.findOne({ userid: req.session.userid }).then((result) => {
@@ -35,34 +35,12 @@ router.post('/addproperty', checkAuth, (req, res) => {
     })
 })
 
-// properties.updateOne({ owner_id: result._id}, {
-//     $push: {
-//         units: {
-//             unit_name: req.body.house_name,
-//             monthlyRent: req.body.rent,
-//             bedrooms: req.body.bedrooms,
-//             bathrooms: req.body.bathrooms,
-//             tenant_type: req.body.tenant_type,
-//             ispaid: req.body.ispaid,
-//         }
-//     }
-// })
 
 router.get('/properties', (req, res) => {
     console.log(req.session.id)
 
     owners.findOne({ userid: req.session.userid })
         .then((result) => {
-            // const properties = result.properties
-            // properties.forEach(property => {
-            //     property.units.forEach(unit => {
-            //         unit.tenants.forEach(tenant => {
-            //             if (tenant.tenant_id == req.session.id) {
-            //                 unit.isTenant = true
-            //             }
-            //         })
-            //     })
-            // });
             properties.find({ owner_id: result._id }).then((result) => {
                 res.json(result)
             }).catch((err) => {
@@ -78,14 +56,18 @@ router.get('/properties', (req, res) => {
 
 
 
-router.get('/houses/:id', (req, res) => {
-    properties.findOne({ userID: req.session.userID })
+router.get('/:id', (req, res) => {
+    properties.findById(req.params.id)
         .then((result) => {
-            // console.log("in get room result" + result);
             if (result) {
-                const house = result.houses.find(house => house._id == req.params.id)
-                // console.log("in get result room found" + house)
-                res.json(house)
+                const houses = result.units
+                console.log(houses, "in get houses")
+                units.find({ _id: { $in: houses } }).then((result) => {
+                    console.log(result, "in response sending of units")
+                    res.send(result)
+                }).catch((err) => {
+                    console.log(err)
+                })
             }
         }
         )
@@ -95,61 +77,78 @@ router.get('/houses/:id', (req, res) => {
         )
 });
 
-router.post('/houses/:id', checkAuth, (req, res) => {
-    console.log(req.session.userID, "in put", req.params.id, "body", req.body)
-    properties.findOneAndUpdate({ userID: req.session.userID, "houses._id": req.params.id }, {
-        $set: {
-            "houses.$.house_name": req.body.house_name,
-            "houses.$.tenant_type": req.body.tenant_type,
-            "houses.$.rent": req.body.rent,
-            "houses.$.capacity": req.body.capacity
+router.put('/:id/edithouse/:h_id', checkAuth, (req, res) => {
+    console.log(req.body, "in put houses");
+})
 
+router.delete('/:id/deletehouse/:h_id', checkAuth, (req, res) => {
+    properties.findOneAndUpdate({ _id: req.params.id }, {
+        $pull: {
+            units: req.params.h_id
         }
     }).then((result) => {
-        console.log(result, "in put")
-        res.send("Done Updating")
-    }).catch((err) => {
-        console.log(err)
-    })
-
-
-    //WHY ISN'T THIS WORKING??????
-    // properties.findOneAndUpdate(
-    //     { userID: req.session.UserID },
-    //     {
-    //         $set: {
-    //             "houses.$[elem].house_name": req.body.house_name,
-    //             "houses.$[elem].tenant_type": req.body.tenant_type,
-    //             "houses.$[elem].rent": req.body.rent,
-    //             "houses.$[elem].capacity": req.body.capacity
-
-    //         }
-    //     },
-    //     {
-    //         arrayFilters: [{ "elem._id": req.params.id }],
-    //     }
-    // ).then((result) => {
-    //     console.log(result, "in put update")
-    //     res.send("Done Updating")
-    // }).catch((err) => {
-    //     console.log(err)
-    // });
-
-});
-
-router.put('/houses/:id/delete', checkAuth, (req, res) => {
-    console.log(req.body, "in put houses");
-    properties.findOneAndUpdate({ userID: req.session.userID },
-        {
-            $pull: { houses: { _id: req.params.id } }
-        }).then((result) => {
-            console.log(result, "in put")
-            res.send("Done Updating")
+        console.log(result, "result in then of properties pull")
+        units.deleteOne({ _id: req.params.h_id })
+        response = result.units.filter((unit) => {
+            return unit != req.params.h_id
+        }
+        )
+        units.find({ _id: { $in: response } }).then((result) => {
+            console.log(result, "result in then of units find")
+            res.send(result)
         }).catch((err) => {
             console.log(err)
         })
-}
-);
+
+    }).catch((err) => {
+        console.log(err)
+    })
+})
+
+
+router.post('/:id/addunit', checkAuth, (req, res) => {
+    console.log(req.body, "req body in post add unit")
+    properties.findOne({ _id: req.params.id }).then((result) => {
+        console.log(result, "in post add unit")
+        if (result) {
+            const newUnit = new units({
+                unitName: req.body.unitName,
+                monthlyRent: req.body.monthlyRent,
+                bedrooms: req.body.bedrooms,
+
+            })
+            newUnit.save().then((result) => {
+                console.log(result, "in save unit")
+                console.log(result._id, "in then of properties update")
+                properties.findOneAndUpdate({ _id: req.params.id }, {
+                    $push: {
+                        units: result._id
+                    }
+                }).then((old_property) => {
+                    console.log(old_property, "in then push unit")
+                    units.find({ _id: { $in: old_property.units } }).then((old_units) => {
+                        old_units.push(result)
+                        console.log(old_units, "in response sending of units")
+                        res.send(old_units)
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }).catch((err) => {
+                    console.log(err)
+                }
+                )
+            }).catch((err) => {
+                console.log(err)
+            })
+
+        }
+    }).catch((err) => {
+        console.log(err)
+        res.sendStatus(500)
+    })
+})
+
+
 
 
 module.exports = router;
