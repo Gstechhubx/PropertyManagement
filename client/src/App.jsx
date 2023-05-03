@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client'
 import { Route, Routes } from 'react-router-dom'
 import OwnerDashboard from './pages/ownerDashboard'
 import Register from './pages/register'
-import House from './pages/house'
+import Property from './pages/property'
 function App() {
   return (
     <Routes>
@@ -12,7 +12,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/ownerdashboard" element={<OwnerDashboard />} />
-      <Route path="/dashboard/house/:house_id" element={<House />} />
+      <Route path="/dashboard/property/:property_id" element={<Property />} />
     </Routes>
   )
 }

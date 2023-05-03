@@ -41,23 +41,23 @@ export default function Register() {
             .catch(err => console.log(err));
     }
     return (
-        <div className=' h-[100vh] pt-[10%]'>
-            <form className=' w-[50%] mx-auto bg-white opacity-75 border-gray-400 border-2 rounded-lg p-5 backdrop-blur-20px backdrop-saturate-200 flex-col flex space-y-7 place-items-center text-center '>
-                <h1 className='text-4xl'>Register</h1>
+        <div className=' h-[100vh] pt-[5rem]'>
+            <form className=' w-[20rem] md:w-[30rem] mx-auto pb-4 bg-white opacity-75 border-gray-400 border-2 rounded-lg  backdrop-blur-20px backdrop-saturate-200 flex-col flex space-y-7 place-items-center text-center '>
+                <h1 className='text-4xl mt-2'>Register</h1>
                 <input className='w-[80%] border-2 border-gray-400 rounded-lg p-2' name="name" type='text' onChange={handleChange} placeholder="Username" />
                 <input className='w-[80%] border-2 border-gray-400 rounded-lg p-2' name="email" type='email' onChange={handleChange} placeholder="Email" />
                 <input className='w-[80%] border-2 border-gray-400 rounded-lg p-2' name="password" type="password" onChange={handleChange} placeholder="Password" />
                 <div>
-                    <label className=''>Owner</label>
+                    <label >Owner</label>
                     <input className='w-[80%] border-2  border-gray-400 rounded-lg p-2' name="role" value="owner" type="radio" onChange={handleChange} />
-                    <label className=''>Tenant</label>
+                    <label >Tenant</label>
                     <input className='w-[80%] border-2  border-gray-400 rounded-lg p-2' name="role" value="tenant" type="radio" onChange={handleChange} />
                 </div>
                 <button className='w-[80%] border-2 border-gray-400 rounded-lg p-2' onClick={handleRegister}>Register</button>
 
-                <pre>
+                <p>
                     Already a User? <a href="/login" className='underline hover:text-blue-600'>Log In</a>
-                </pre>
+                </p>
             </form>
         </div>
     )
