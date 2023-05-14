@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const properties = require('../models/properties');
 const owners = require('../models/owners');
+const tenants = require('../models/tenants');
 const units = require('../models/units');
 const checkAuth = require('../middlewares/checkAuth');
 router.post('/addproperty', checkAuth, (req, res) => {
@@ -77,8 +78,43 @@ router.get('/:id', (req, res) => {
         )
 });
 
-router.put('/:id/edithouse/:h_id', checkAuth, (req, res) => {
+router.put('/:id/edithouse/:h_id', checkAuth, async (req, res) => {
     console.log(req.body, "in put houses");
+    try {
+        const update = {
+            unitName: req.body.unitName,
+            monthlyRent: req.body.monthlyRent,
+            bedrooms: req.body.bedrooms,
+        };
+        if (req.body.tenant_email) {
+            const tenant = await tenants.findOne({ email: req.body.tenant_email });
+            if (tenant) {
+                update.tenant_id = tenant._id;
+            } else {
+                throw new Error("Tenant Not Found");
+            }
+        }
+        await units.findOneAndUpdate({ _id: req.params.h_id }, { $set: update });
+        properties.findById(req.params.id)
+            .then((result) => {
+                if (result) {
+                    const houses = result.units
+                    console.log(houses, "in get houses")
+                    units.find({ _id: { $in: houses } }).then((result) => {
+                        console.log(result, "in response sending of units")
+                        res.send(result)
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }
+            }
+            )
+    } catch (err) {
+        console.log(err);
+        res.status(404).send({ msg: err.message });
+    }
+
+
 })
 
 router.delete('/:id/deletehouse/:h_id', checkAuth, (req, res) => {
@@ -88,17 +124,20 @@ router.delete('/:id/deletehouse/:h_id', checkAuth, (req, res) => {
         }
     }).then((result) => {
         console.log(result, "result in then of properties pull")
-        units.deleteOne({ _id: req.params.h_id })
-        response = result.units.filter((unit) => {
-            return unit != req.params.h_id
-        }
-        )
-        units.find({ _id: { $in: response } }).then((result) => {
-            console.log(result, "result in then of units find")
-            res.send(result)
-        }).catch((err) => {
-            console.log(err)
+        units.deleteOne({ _id: req.params.h_id }).then((result1) => {
+
+            response = result.units.filter((unit) => {
+                return unit != req.params.h_id
+            }
+            )
+            units.find({ _id: { $in: response } }).then((result) => {
+                console.log(result, "result in then of units find")
+                res.send(result)
+            }).catch((err) => {
+                console.log(err)
+            })
         })
+
 
     }).catch((err) => {
         console.log(err)

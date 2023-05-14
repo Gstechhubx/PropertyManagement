@@ -70,8 +70,6 @@ router.post('/register', (req, res) => {
             const tenant = new tenants({
                 name: req.body.name,
                 email: req.body.email,
-                leaseStartDate: req.body.leaseStartDate,
-                leaseEndDate: req.body.leaseEndDate
             })
             tenant.save().then((result) => {
                 console.log("saveedd", result)
