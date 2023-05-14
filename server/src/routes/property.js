@@ -144,6 +144,26 @@ router.delete('/:id/deletehouse/:h_id', checkAuth, (req, res) => {
     })
 })
 
+router.delete('/deleteproperty/:id', checkAuth, (req, res) => {
+    properties.findOneAndDelete({ _id: req.params.id }).then((result) => {
+        console.log(result, "result in then of properties delete")
+        owners.findOneAndUpdate({ userid: req.session.userid }, {
+            $pull: {
+                properties: req.params.id
+            }
+        }).then((result) => {
+            console.log(result, "result in then of owners pull");
+        })
+        units.deleteMany({ _id: { $in: result.units } }).then((result) => {
+            console.log(result, "result in then of units delete");
+        }
+        )
+    }).catch((err) => {
+        console.log(err)
+    })
+})
+
+
 
 router.post('/:id/addunit', checkAuth, (req, res) => {
     console.log(req.body, "req body in post add unit")
